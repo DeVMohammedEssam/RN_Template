@@ -1,0 +1,52 @@
+to install react-native-webrtc
+---------------------------------
+1- forget about all steps in docs except for the "permissions"
+2- inside of app/buid.gradle  defaultConfig{..} add the following
+	 ndk {
+            abiFilters 'armeabi-v7a', 'x86'
+        }
+
+        packagingOptions {
+            // The project react-native does not provide 64-bit binaries at the
+            // time of this writing. Unfortunately, packaging any 64-bit
+            // binaries into the .apk will crash the app at runtime on 64-bit
+            // platforms.
+            exclude '/lib/mips64/**'
+            exclude '/lib/arm64-v8a/**'
+            exclude '/lib/x86_64/**'
+        }
+
+3- edit android/build.gradle
+       classpath("com.android.tools.build:gradle:3.4.1")
+
+4- gradle.wrapper.properties
+	distributionUrl=https\://services.gradle.org/distributions/gradle-5.5.1-all.zip
+
+NOTE => all of these information can be found in this repo:
+	https://github.com/baconcheese113/react-native-webrtc-minimal
+
+
+--------------------------------------------------------------------
+TO GENERATE KEYSTORE
+--------------------
+inside of android/app  run the following:
+keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000
+---------------------------------------------------------------------
+TO CLEAN GRADLE FOR A NEW BUILD
+--------------------------------
+cd android && ./gradlew clean
+
+---------------------------------------------------------------------
+TO PRODUCE A BUILD FOR THE FIRST TIME YOU HAVE TO RUN THESE COMMANDS AS bundle location changed due to gradle updates
+------------------------------------
+
+Follow the procedure first time.
+
+mkdir android/app/src/main/assets
+
+react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res 
+
+
+npm start -- --reset-cache
+
+react-native run-android
